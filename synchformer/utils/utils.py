@@ -87,6 +87,8 @@ def instantiate_from_config(config):
         raise KeyError('Expected key `target` to instantiate.')
     if "torch" not in config['target']:
         config['target'] = "synchformer." + config['target']
+        config['target'] = config['target'].replace("synchformer.lib.synchformer.", "synchformer.")
+        config['target'] = config['target'].replace("lib.synchformer.", "synchformer.")
         print(f"loading target: {config['target']=}")
     return get_obj_from_str(config['target'])(**config.get('params', dict()))
 
