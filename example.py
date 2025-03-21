@@ -7,10 +7,10 @@ import torchaudio
 import torchvision
 from omegaconf import OmegaConf
 
-from dataset.dataset_utils import get_video_and_audio
-from dataset.transforms import make_class_grid, quantize_offset
-from utils.utils import check_if_file_exists_else_download, which_ffmpeg
-from scripts.train_utils import get_model, get_transforms, prepare_inputs
+from synchformer.dataset.dataset_utils import get_video_and_audio
+from synchformer.dataset.transforms import make_class_grid, quantize_offset
+from synchformer.utils.utils import check_if_file_exists_else_download, which_ffmpeg
+from synchformer.scripts.train_utils import get_model, get_transforms, prepare_inputs
 
 
 def reencode_video(path, vfps=25, afps=16000, in_size=256):
@@ -130,7 +130,7 @@ def main(args):
 
     # load the model
     _, model = get_model(cfg, device)
-    ckpt = torch.load(ckpt_path, map_location=torch.device('cpu'))
+    ckpt = torch.load(ckpt_path, map_location=torch.device('cpu'), weights_only=False)
     model.load_state_dict(ckpt['model'])
     model.eval()
 
@@ -181,8 +181,8 @@ def main(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--exp_name', required=True, help='In a format: xx-xx-xxTxx-xx-xx')
-    parser.add_argument('--vid_path', required=True, help='A path to .mp4 video')
+    parser.add_argument('--exp_name', default='24-01-04T16-39-21', help='In a format: xx-xx-xxTxx-xx-xx')
+    parser.add_argument('--vid_path', default="/root/streaming-inference/video.mp4", help='A path to .mp4 video')
     parser.add_argument('--offset_sec', type=float, default=0.0)
     parser.add_argument('--v_start_i_sec', type=float, default=0.0)
     parser.add_argument('--device', default='cuda:0')
